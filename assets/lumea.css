@@ -59,3 +59,6 @@ body.lg-page :is(.lg-root,#lg-root) .lg-form .wpcf7 :is(input:not([type=submit])
 
 /* mobile Menu / Close: match the logo's high-contrast serif */
 :is(.lg-root,#lg-root) :is(.lg-open,.lg-close).eyebrow{font-family:var(--font-serif);font-weight:500;font-size:15px;letter-spacing:.2em;line-height:1}
+
+/* split sections: from tablet up the photo fills its half of the grid (no aspect-ratio overflow into the text) */
+@media (min-width:768px){:is(.lg-root,#lg-root) figure.lg-fill{aspect-ratio:auto!important;width:100%;height:100%;min-height:32rem}}

@@ -251,7 +251,7 @@ lg_register(
 	),
 	function ( $a, $content ) {
 		$dark  = 'espresso' === $a['tone'];
-		$photo = lg_photo( $a['image'], $dark ? 'reception' : 'jess', 'md:h-full' );
+		$photo = lg_photo( $a['image'], $dark ? 'reception' : 'jess', 'lg-fill' );
 		$t     = lg_fade( 'section-pad flex flex-col justify-center px-5 md:px-16 lg:px-24' ) . lg_eyebrow( $a['eyebrow'], $a['num'] );
 		if ( $a['heading'] ) {
 			$t .= 'italic' === $a['heading_style']
