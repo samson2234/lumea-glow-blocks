@@ -112,7 +112,8 @@ function lg_img( $val, $fallback = 'hero', $size = 'full' ) {
 			return $hit;
 		}
 	}
-	return array( LG_URL . 'assets/img/lg-' . $key . '.jpg', 'Lumea Glow' );
+	$alts = function_exists( 'lg_photo_alts' ) ? lg_photo_alts() : array();
+	return array( LG_URL . 'assets/img/lg-' . $key . '.jpg', $alts[ $key ] ?? 'Lumea Glow' );
 }
 
 /** 4:5 photo with gentle zoom on hover. */

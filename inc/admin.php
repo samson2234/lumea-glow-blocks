@@ -94,7 +94,7 @@ function lg_ensure_images() {
 		}
 		require_once ABSPATH . 'wp-admin/includes/image.php';
 		wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id, $up['file'] ) );
-		update_post_meta( $id, '_wp_attachment_image_alt', 'Lumea Glow' );
+		update_post_meta( $id, '_wp_attachment_image_alt', lg_photo_alts()[ $key ] ?? 'Lumea Glow' );
 		$ids[ $key ] = $id;
 		$changed     = true;
 	}
