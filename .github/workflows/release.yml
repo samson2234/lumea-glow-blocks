@@ -1,9 +1,12 @@
-# Push a tag like v1.4.1 → this builds lumea-glow-blocks.zip and publishes a GitHub Release.
+# Push to main with a new Version in lumea-glow-blocks.php → this builds
+# lumea-glow-blocks.zip and publishes GitHub Release vX.Y.Z.
 # WordPress then shows "Update available" for Lumea Glow Blocks.
+# Pushes that don't change the version just get linted; nothing is released.
 name: Release
 on:
   push:
-    tags: ['v*']
+    branches: [main]
+  workflow_dispatch:
 permissions:
   contents: write
 jobs:
@@ -11,21 +14,38 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Tag must match plugin version
+      - name: Read version
+        id: v
         run: |
-          TAG="${GITHUB_REF_NAME#v}"
           HDR=$(grep -m1 -oP 'Version:\s*\K[0-9.]+' lumea-glow-blocks.php)
           CONST=$(grep -m1 -oP "'LG_VER', '\K[0-9.]+" lumea-glow-blocks.php)
-          echo "tag=$TAG header=$HDR const=$CONST"
-          [ "$TAG" = "$HDR" ] && [ "$TAG" = "$CONST" ] || { echo "::error::Bump Version and LG_VER in lumea-glow-blocks.php to $TAG"; exit 1; }
+          echo "header=$HDR const=$CONST"
+          [ "$HDR" = "$CONST" ] || { echo "::error::Version ($HDR) and LG_VER ($CONST) must match"; exit 1; }
+          echo "ver=$HDR" >> "$GITHUB_OUTPUT"
       - name: Lint PHP
         run: find . -name '*.php' -not -path './.git/*' -print0 | xargs -0 -n1 php -l
+      - name: Skip if this version is already released
+        id: chk
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "v${{ steps.v.outputs.ver }}" >/dev/null 2>&1; then
+            echo "v${{ steps.v.outputs.ver }} already released, nothing to do."; echo "new=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "new=true" >> "$GITHUB_OUTPUT"
+          fi
       - name: Build zip
+        if: steps.chk.outputs.new == 'true'
         run: |
           mkdir -p build/lumea-glow-blocks
           rsync -a --exclude '.git' --exclude '.github' --exclude 'build' --exclude '.gitignore' --exclude 'README.md' ./ build/lumea-glow-blocks/
           cd build && zip -rq lumea-glow-blocks.zip lumea-glow-blocks
-      - uses: softprops/action-gh-release@v2
+      - name: Publish release
+        if: steps.chk.outputs.new == 'true'
+        uses: softprops/action-gh-release@v2
         with:
+          tag_name: v${{ steps.v.outputs.ver }}
+          name: v${{ steps.v.outputs.ver }}
+          target_commitish: ${{ github.sha }}
           files: build/lumea-glow-blocks.zip
           generate_release_notes: true
