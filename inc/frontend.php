@@ -32,6 +32,20 @@ add_action(
 	100
 );
 
+/** Load Google Fonts without blocking first paint (font-display:swap keeps text visible meanwhile). */
+add_filter(
+	'style_loader_tag',
+	function ( $tag, $handle ) {
+		if ( 'lg-fonts' !== $handle ) {
+			return $tag;
+		}
+		$async = str_replace( " media='all'", " media='print' onload=\"this.media='all'\"", $tag );
+		return $async . '<noscript>' . $tag . '</noscript>';
+	},
+	10,
+	2
+);
+
 /** Open the Google Fonts connections early (fonts are render-critical on these pages). */
 add_filter(
 	'wp_resource_hints',
