@@ -164,3 +164,16 @@ add_action(
 		update_option( 'lg_alt_ver', 1, false );
 	}
 );
+
+/** Point crawlers at the sitemap index (WordPress's virtual robots.txt has no Sitemap line). */
+add_filter(
+	'robots_txt',
+	function ( $out, $public ) {
+		if ( $public && false === stripos( $out, 'Sitemap:' ) ) {
+			$out = rtrim( $out ) . "\n\nSitemap: " . home_url( '/sitemaps.xml' ) . "\n";
+		}
+		return $out;
+	},
+	20,
+	2
+);
