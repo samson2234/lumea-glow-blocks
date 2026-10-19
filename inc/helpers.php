@@ -80,7 +80,8 @@ function lg_attachment( $id, $size ) {
 		return null;
 	}
 	$alt = get_post_meta( (int) $id, '_wp_attachment_image_alt', true );
-	return array( $url, $alt ? $alt : 'Lumea Glow' );
+	$set = wp_get_attachment_image_srcset( (int) $id, 'full' );
+	return array( $url, $alt ? $alt : 'Lumea Glow', $set ? $set : '' );
 }
 
 /**
@@ -113,15 +114,21 @@ function lg_img( $val, $fallback = 'hero', $size = 'full' ) {
 		}
 	}
 	$alts = function_exists( 'lg_photo_alts' ) ? lg_photo_alts() : array();
-	return array( LG_URL . 'assets/img/lg-' . $key . '.jpg', $alts[ $key ] ?? 'Lumea Glow' );
+	return array( LG_URL . 'assets/img/lg-' . $key . '.jpg', $alts[ $key ] ?? 'Lumea Glow', '' );
 }
 
 /** 4:5 photo with gentle zoom on hover. */
 function lg_photo( $val, $fallback, $cls = '', $eager = false, $ratio = '4/5' ) {
-	list( $url, $alt ) = lg_img( $val, $fallback );
+	list( $url, $alt, $set ) = lg_img( $val, $fallback, 'large' );
 	return '<figure class="' . esc_attr( trim( 'zoom relative bg-stone ' . $cls ) ) . '" style="aspect-ratio:' . esc_attr( $ratio ) . '">'
-		. '<img src="' . esc_url( $url ) . '" alt="' . esc_attr( $alt ) . '" loading="' . ( $eager ? 'eager' : 'lazy' ) . '" decoding="async" data-no-lazy="1" class="skip-lazy no-lazyload absolute inset-0 h-full w-full object-cover">'
+		. '<img src="' . esc_url( $url ) . '"' . lg_srcset( $set, $eager ? '(min-width:768px) 50vw, 100vw' : '(min-width:768px) 40vw, 100vw' ) . ' alt="' . esc_attr( $alt ) . '"'
+		. ( $eager ? ' loading="eager" fetchpriority="high"' : ' loading="lazy"' ) . ' decoding="async" data-no-lazy="1" class="skip-lazy no-lazyload absolute inset-0 h-full w-full object-cover">'
 		. '</figure>';
+}
+
+/** srcset/sizes attributes, so phones download a phone-sized image instead of the original. */
+function lg_srcset( $set, $sizes ) {
+	return $set ? ' srcset="' . esc_attr( $set ) . '" sizes="' . esc_attr( $sizes ) . '"' : '';
 }
 
 /** Parse a WPBakery param_group value into an array of rows. */

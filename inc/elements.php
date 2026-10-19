@@ -169,9 +169,9 @@ lg_register(
 		)
 	),
 	function ( $a ) {
-		list( $url, $alt ) = lg_img( $a['image'], 'hero' );
+		list( $url, $alt, $set ) = lg_img( $a['image'], 'hero', 'large' );
 		$o  = '<section class="relative h-[100svh] min-h-[620px] overflow-hidden">';
-		$o .= '<img src="' . esc_url( $url ) . '" alt="' . esc_attr( $alt ) . '" fetchpriority="high" data-no-lazy="1" class="skip-lazy no-lazyload absolute inset-0 h-full w-full object-cover object-[70%_center]">';
+		$o .= '<img src="' . esc_url( $url ) . '"' . lg_srcset( $set, '100vw' ) . ' alt="' . esc_attr( $alt ) . '" fetchpriority="high" loading="eager" data-no-lazy="1" class="skip-lazy no-lazyload absolute inset-0 h-full w-full object-cover object-[70%_center]">';
 		$o .= '<div class="absolute inset-0 bg-ivory/30 md:bg-transparent"></div><div class="lg-hero-veil absolute inset-0"></div>';
 		$o .= '<div class="wrap relative flex h-full flex-col justify-end pb-16 md:justify-center md:pb-0">' . lg_fade( 'max-w-xl' );
 		$o .= lg_eyebrow( $a['eyebrow'] );

@@ -32,6 +32,20 @@ add_action(
 	100
 );
 
+/** Open the Google Fonts connections early (fonts are render-critical on these pages). */
+add_filter(
+	'wp_resource_hints',
+	function ( $urls, $type ) {
+		if ( 'preconnect' === $type && lg_page_uses_blocks() ) {
+			$urls[] = 'https://fonts.googleapis.com';
+			$urls[] = array( 'href' => 'https://fonts.gstatic.com', 'crossorigin' );
+		}
+		return $urls;
+	},
+	10,
+	2
+);
+
 add_filter(
 	'body_class',
 	function ( $classes ) {
