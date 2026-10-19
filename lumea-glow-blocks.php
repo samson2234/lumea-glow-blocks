@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Lumea Glow Blocks
  * Description: The Lumea Glow website design as editable WPBakery elements (category "Lumea Glow"), plus one-click page templates under Pages → Lumea Glow Pages.
- * Version: 1.4.0
+ * Version: 1.4.1
  * Author: CleverStack
  * Requires PHP: 7.4
  * Text Domain: lumea-glow
@@ -12,7 +12,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'LG_VER', '1.4.0' );
+// A second copy of this plugin (e.g. an extra upload) must never fatal the site.
+if ( defined( 'LG_VER' ) ) {
+	return;
+}
+
+define( 'LG_VER', '1.4.1' );
 define( 'LG_DIR', plugin_dir_path( __FILE__ ) );
 define( 'LG_URL', plugin_dir_url( __FILE__ ) );
 define( 'LG_IMG_KEYS', 'client,client2,client3,consult,consult2,fabric,fabric2,fabric3,facial,front,glow,hero,injecting,jess,jess2,mirror,needling,needling2,portrait,profile,reception,room,serum' );
